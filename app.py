@@ -15,3 +15,5 @@ def process_user_name(name):
 if __name__ == "__main__":
     print(process_user_name("uncle")) # Works
     print(process_user_name(""))    # WILL CRASH
+
+print(hee)
