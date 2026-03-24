@@ -1,19 +1,39 @@
-
-# app.py - The code the Agent needs to check
-
-def process_user_name(name):
-    """
-    Capitalizes the first letter of the name.
-    BUG: If the name is an empty string, name[0] will throw an IndexError.
-    """
-    if name is None:
-        return "Guest"
+def basic_calculator():
+    print("--- Simple Python Calculator ---")
     
-    # This line will crash if name == ""
-    formatted_name = name[0].upper() + name[1:].lower()
-    return formatted_name
+    try:
+        num1 = int(input("Enter the first number: "))
+        num2 = int(input("Enter the second number: "))
+        
+        print("\nChoose an operation:")
+        print(" + Addition\n")
+        print(" - Subtraction\n")
+        print(" * Multiplication\n")
+        print(" / Division\n")
+        
+        choice = input("\nEnter choice (+, -, *, /): ")
 
-if __name__ == "__main__":
-    print(process_user_name("uncle")) # Works
-    print(process_user_name(""))    # WILL CRASH
-    print("halo halo")
+        # Performing the calculation based on the operand
+        if choice == '+':
+            result = num1 + num2
+            print(f"\nResult: {num1} + {num2} = {result}")
+        elif choice == '-':
+            result = num1 - num2
+            print(f"\nResult: {num1} - {num2} = {result}")
+        elif choice == '*':
+            result = num1 * num2
+            print(f"\nResult: {num1} * {num2} = {result}")
+        elif choice == '/':
+            result = num1 / num2
+            print(f"\nResult: {num1} / {num2} = {result}")
+
+    # error
+    except ValueError:
+        print("\nInput Error: Please make sure to enter numeric values.")
+
+# Run the calculator
+def main():
+    basic_calculator()
+
+if _name_ == "_main_":
+    main()
