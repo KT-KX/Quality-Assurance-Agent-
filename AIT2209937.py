@@ -1,20 +1,39 @@
-def get_weather_advice(city):
-    weather_data = {
-        "Kuala Lumpur": {"temp": 32, "condition": "Sunny"},
-        "Sepang": {"temp": 30, "condition": "Rainy"},
-        "Xiamen": {"temp": 22, "condition": "Cloudy"}
-    }
+def basic_calculator():
+    print("--- Simple Python Calculator ---")
     
-    city = city.strip().title()
-    if city not in weather_data:
-        return "Error: City not found."
-    
-    data = weather_data[city]
-    if data['condition'] == "Rainy":
-        return "Advice: Bring an umbrella."
-    elif data['temp'] > 30:
-        return "Advice: Stay hydrated!"
-    return "Advice: Enjoy the day."
+    try:
+        num1 = int(input("Enter the first number: "))
+        num2 = int(input("Enter the second number: "))
+        
+        print("\nChoose an operation:")
+        print(" + Addition\n")
+        print(" - Subtraction\n")
+        print(" * Multiplication\n")
+        print(" / Division\n")
+        
+        choice = input("\nEnter choice (+, -, *, /): ")
 
-if _name_ == "_main_":
-    print(get_weather_advice(input("Enter city: ")))
+        # Performing the calculation based on the operand
+        if choice == '+':
+            result = num1 + num2
+            print(f"\nResult: {num1} + {num2} = {result}")
+        elif choice == '-':
+            result = num1 - num2
+            print(f"\nResult: {num1} - {num2} = {result}")
+        elif choice == '*':
+            result = num1 * num2
+            print(f"\nResult: {num1} * {num2} = {result}")
+        elif choice == '/':
+            result = num1 / num2
+            print(f"\nResult: {num1} / {num2} = {result}")
+
+    # error
+    except ValueError:
+        print("\nInput Error: Please make sure to enter numeric values.")
+
+# Run the calculator
+def main():
+    basic_calculator()
+
+if __name__ == "__main__":
+    main()
