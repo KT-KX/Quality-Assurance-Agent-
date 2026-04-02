@@ -1,0 +1,1261 @@
+{
+  "name": "Test Issues",
+  "nodes": [
+    {
+      "parameters": {
+        "fromEmail": "KUANTIANENG@gmail.com",
+        "toEmail": "kuantianeng@gmail.com",
+        "subject": "Test agent",
+        "emailFormat": "text",
+        "text": "=New Issue Detected \n{{ $json.body.issue.title }}\n\n{{ $json.body.issue.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        -320
+      ],
+      "id": "134dc0fe-212a-44e7-b4d0-655be6937f77",
+      "name": "Send email",
+      "webhookId": "acb2e08e-605e-46d3-9ef5-2bc42cf74e7a",
+      "credentials": {
+        "smtp": {
+          "id": "d5wsDTbfMlvGZK0c",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "KT-KX",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "Quality-Assurance-Agent-",
+          "mode": "list",
+          "cachedResultName": "Quality-Assurance-Agent-",
+          "cachedResultUrl": "https://github.com/KT-KX/Quality-Assurance-Agent-"
+        },
+        "events": [
+          "issues",
+          "pull_request"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -528
+      ],
+      "id": "6f35fadf-d854-472a-822f-b9b9a5586c02",
+      "name": "Github Trigger",
+      "webhookId": "6995af4b-ed4f-48f3-89c1-855955d1eff4",
+      "credentials": {
+        "githubApi": {
+          "id": "xU5gWhKr3jJDmB4x",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "492db15e-41fb-4440-acf4-8b682eb5e097",
+              "leftValue": "={{ $json.body.action }}",
+              "rightValue": "opened",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        -112
+      ],
+      "id": "7eb534ce-ef79-488e-a45c-100ed66bcca1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $json.body.issue.user.login }}",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.body.repository.name }}"
+        },
+        "issueNumber": "={{ $json.body.issue.number }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -128
+      ],
+      "id": "eebdd8fc-9b04-475e-bd0f-9fd07ccf9105",
+      "name": "Get an issue",
+      "webhookId": "19abe427-5263-41f7-86b2-ec005bc09d8a",
+      "credentials": {
+        "githubApi": {
+          "id": "xU5gWhKr3jJDmB4x",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "=KT-KX",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "=Quality-Assurance-Agent-",
+          "mode": "name"
+        },
+        "filePath": "={{ $json.path }}",
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        64
+      ],
+      "id": "4b20e01c-4227-4111-b051-a56018fd276f",
+      "name": "Get a file",
+      "webhookId": "082960ad-f427-4254-ba7c-ca25268250a0",
+      "credentials": {
+        "githubApi": {
+          "id": "xU5gWhKr3jJDmB4x",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "list",
+        "owner": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.body.repository.owner.login }}"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.body.repository.name }}"
+        }
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        64
+      ],
+      "id": "a59153f7-3e50-4e22-b2b3-72f19029b334",
+      "name": "List files",
+      "webhookId": "8bf28504-9d13-47b9-87d1-69a8914b62eb",
+      "credentials": {
+        "githubApi": {
+          "id": "xU5gWhKr3jJDmB4x",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a code validation and correction agent.\n\nInputs:\n\nCode: {{ $json.code }}\nContext: {{ $json.body }}\nTitle: {{ $json.title }}\n\nYour task is to review the provided code and identify any issues based on the given context and title.\n\nRules:\n\nAnalyze the code against the context and title to detect errors, inconsistencies, or logical issues.\nIf issues are found, return the full corrected code.\nDo not remove or omit any part of the original code.\nPreserve all existing elements (e.g., print statements, logs, structure) unless a change is required to fix an issue.\nDo not include explanations, comments, or extra text.\nIf no issues are found, return the original code or text exactly as provided.\n\nOutput format:\n\nPlain code only (no markdown, no backticks, no annotations).",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        2112,
+        -112
+      ],
+      "id": "68cd8558-1678-4516-a6f3-9857cc9a1185",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1584,
+        -112
+      ],
+      "id": "a55f87e7-8fb1-489c-af06-6e47554e64b5",
+      "name": "Merge",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "url, body, title, data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        -112
+      ],
+      "id": "4de7cbdb-756c-433b-91ab-224957bfd83c",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get all incoming items\nconst items = $input.all();\n\n// 2. Extract common metadata from the first item (assuming it's passed along)\n// We use optional chaining ?. to prevent crashes if these don't exist\nconst firstItem = items[0]?.json || {};\nconst issueBody = firstItem.body || '';\nconst issueTitle = firstItem.title || '';\nconst issueUrl = firstItem.html_url || firstItem.url || '';\n\n// 3. Filter and Map the items\n// We only want items that look like Python code (contain 'def ')\nreturn items\n  .filter(item => {\n    const content = item.json.data || \"\";\n    return content.includes('def '); // Only keep items with Python functions\n  })\n  .map(item => {\n    const rawContent = item.json.data;\n\n    // Detect a filename from comments or default to app.py\n    // (e.g., if the code starts with # app.py)\n    const fileNameMatch = rawContent.match(/^#\\s*([\\w\\.-]+)/);\n    const filename = fileNameMatch ? fileNameMatch[1] : 'app.py';\n\n    return {\n      json: {\n        filename: filename,\n        code: rawContent,\n        body: issueBody,\n        title: issueTitle,\n        url: issueUrl\n      }\n    };\n  });"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        -112
+      ],
+      "id": "2b2e7e6a-a3bc-4317-90fe-8571fee16b0c",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5-coder:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        128
+      ],
+      "id": "1118733e-3aaa-4616-9f87-01b828652ddc",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "9BRYvRP2M5pArHnA",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6a623c0a-6efb-4ecf-b827-7319940b58bf",
+              "leftValue": "={{ $json.body.issue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        48
+      ],
+      "id": "e432fe4a-e0ac-4998-a10a-e1b195be3330",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Senior QA Architect. Output ONLY a raw JSON array.\n\nUser Prompt:\nAnalyze the provided SOURCE CODE and generate 5 unique pytest cases.\n\nRULES:\n\n1. Mandatory Iterator Length: If the function calls input() multiple times, the 'inputs' iterator MUST contain a value for EVERY potential input() call in the function's workflow to avoid StopIteration errors.\n   Example: inputs = iter(['10', '20', '+']) \n\n2. CapSys Limitation: Do NOT assert that input prompt strings (e.g., \"Enter number:\") are in captured.out. capsys often fails to capture these. ONLY assert on strings explicitly sent via print() or the final result.\n\n3. Exception Handling: If the source code does NOT handle ZeroDivisionError, the test_code must use 'with pytest.raises(ZeroDivisionError):'. If it DOES handle it via print, assert the printed error message.\n\n4. Format: [{\"id\": \"TC1\", \"description\": \"Verify X\", \"test_code\": \"def test_x(monkeypatch, capsys):\\n    ...\"}]\n\nSOURCE CODE:\n{{ $json.output }}\n\n\"Return only valid JSON: an array of objects, each with id, description, and test_code. Ensure proper escaping for newlines and double quotes.\"",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        2928,
+        -96
+      ],
+      "id": "f9dcd928-c5a6-40ff-831f-a51401b98c1c",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5-coder:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        2912,
+        112
+      ],
+      "id": "94c04280-81bd-4416-8b49-b757ccef4d22",
+      "name": "Ollama Chat Model4",
+      "credentials": {
+        "ollamaApi": {
+          "id": "9BRYvRP2M5pArHnA",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.user.login }}"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.base.repo.name }}"
+        },
+        "filePath": "={{ $json.filename }}",
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        288
+      ],
+      "id": "45f08629-96e3-4850-95d5-112a6d78574e",
+      "name": "Get a file1",
+      "webhookId": "d350c6d5-cdb7-42f7-8654-c37ce2c311ef",
+      "credentials": {
+        "githubApi": {
+          "id": "xU5gWhKr3jJDmB4x",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the PR URL from the incoming JSON\nconst prUrl = $input.first().json.body.pull_request.url;\nconst filesUrl = `${prUrl}/files`;\n\ntry {\n  // Use n8n's built-in HTTP helper\n  const response = await this.helpers.request({\n    method: 'GET',\n    url: filesUrl,\n    headers: {\n      'Accept': 'application/vnd.github+json',\n      'User-Agent': 'n8n-workflow', // GitHub requires a User-Agent header\n      'X-GitHub-Api-Version': '2022-11-28'\n    },\n    json: true // Automatically parses the JSON response\n  });\n\n  // Map the files to a cleaner format\n  const changedFiles = response.map(file => ({\n    filename: file.filename,\n    status: file.status,\n    additions: file.additions,\n    deletions: file.deletions,\n    patch: file.patch // This contains the actual code changes\n  }));\n\n  return {\n    files: changedFiles\n  };\n\n} catch (error) {\n  return {\n    error: error.message,\n    details: \"Check if the repository is private or if you hit GitHub rate limits.\"\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        272
+      ],
+      "id": "68050d71-9cc9-4885-a739-f64153b95307",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "files",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        960,
+        288
+      ],
+      "id": "1f511d6d-451d-4a1f-9132-700633bf600f",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "resource": "repository",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.user.login }}",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('Github Trigger').item.json.body.pull_request.head.repo.name }}",
+          "mode": "url"
+        }
+      },
+      "type": "n8n-nodes-base.githubTool",
+      "typeVersion": 1.1,
+      "position": [
+        1648,
+        528
+      ],
+      "id": "4e2ff21b-6446-4f4f-890d-8d0f43d8fa7f",
+      "name": "Get a repository in GitHub",
+      "webhookId": "3897e111-4efa-4958-9683-a20c8da60ce5",
+      "credentials": {
+        "githubApi": {
+          "id": "xU5gWhKr3jJDmB4x",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen3.5:4b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        560
+      ],
+      "id": "131949cb-a014-49ed-bfda-07d564a9f16e",
+      "name": "Ollama Chat Model2",
+      "credentials": {
+        "ollamaApi": {
+          "id": "9BRYvRP2M5pArHnA",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior software engineer and code reviewer.\n\nYour task is to analyze the given code and produce a professional, concise summary.\n\nSTRICT INSTRUCTIONS:\n- Output ONLY the requested analysis.\n- Do NOT include greetings, explanations about yourself, or unrelated information.\n- Do NOT repeat the code.\n- Do NOT add assumptions that are not supported by the code.\n- Use clear technical language.\n- Be concise and structured.\n\nYour analysis MUST include:\n\n1. Purpose of the Code  \n   - What the code is designed to do.\n\n2. Key Components / Logic  \n   - Important functions, classes, or modules.\n   - Core algorithms or workflows.\n\n3. Data Flow  \n   - How input is processed and how output is produced.\n\n4. Dependencies / Technologies Used  \n   - Libraries, frameworks, or external systems.\n\n5. Potential Issues or Limitations (if any)  \n   - Bugs, inefficiencies, or design concerns.\n\n6. Overall Summary  \n   - A short professional conclusion about the code quality and functionality.\n\nOUTPUT FORMAT:\nUse bullet points or short paragraphs.\nKeep the total response concise and professional.\n\nNow analyze the following code:\n{{ $json.filename }}\n\nThe Modification is here:\n{{ $json.patch }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        288
+      ],
+      "id": "c6330f9f-cf35-439c-936d-49c36caeb954",
+      "name": "AI Agent5"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        -112
+      ],
+      "id": "21f687bc-9173-4312-b811-487dcc180678",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2704,
+        -112
+      ],
+      "id": "9f9a85a9-a268-4145-a3cf-6a3292fedfd6",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sourceCode = $('Extract from File').first().json.data;\nlet aiOutput = $input.first().json.output || \"\";\n\n// Remove think blocks and markdown fences\naiOutput = aiOutput.replace(/<think>[\\s\\S]*?<\\/think>/g, '');\naiOutput = aiOutput.replace(/```(?:python|json)?\\n?/g, '').replace(/```/g, '');\n\nconst jsonMatch = aiOutput.match(/\\[[\\s\\S]*\\]|\\{[\\s\\S]*\\}/);\nif (!jsonMatch) throw new Error(\"Could not find any JSON structure in AI response.\");\n\nlet parsedData;\ntry {\n    parsedData = JSON.parse(jsonMatch[0]);\n} catch (e) {\n    throw new Error(\"AI returned malformed JSON: \" + e.message);\n}\n\nconst testCases = Array.isArray(parsedData) ? parsedData : [parsedData];\n\nreturn testCases.map((tc, index) => {\n    const code = tc.test_code || tc.code || \"\";\n    const description = tc.description || tc.desc || `Test Case ${index + 1}`;\n    const id = (tc.id || `TC${index + 1}`).toString().replace(/[^a-zA-Z0-9]/g, '_');\n    // ✅ FIX: Strip out the execution block so it doesn't run during pytest collection\n    const sanitizedSource = sourceCode.replace(/if\\s+(__name__|_name_)\\s+==\\s+[\"'](__main__|_main_)[\"']\\s*:\\s*[\\s\\S]*$/gm, \"\");\n    // ✅ SIMPLE: Just define the source functions directly, no importlib\n    const finalPythonScript = `import pytest\nfrom unittest.mock import patch\n\n${sanitizedSource}\n\n${code}\n`.trim();\n\n    return {\n        json: {\n            id: id,\n            description: description,\n            test_code_b64: Buffer.from(finalPythonScript).toString('base64')\n        }\n    };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3296,
+        -96
+      ],
+      "id": "81c1eff4-66f0-4118-be59-b4068ced3047",
+      "name": "JSON Cleaner",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3552,
+        -96
+      ],
+      "id": "28f77342-d62d-4f0e-abb4-949ef11a6e60",
+      "name": "Loop Over Tests"
+    },
+    {
+      "parameters": {
+        "command": "=powershell -Command \"$b64 = '{{ $json.test_code_b64 }}'; $bytes = [System.Convert]::FromBase64String($b64); $code = [System.Text.Encoding]::UTF8.GetString($bytes);  $tmp = $env:TEMP + '\\test_' + [System.Guid]::NewGuid().ToString() + '.py'; [System.IO.File]::WriteAllText($tmp, $code, [System.Text.Encoding]::UTF8); $p = Start-Process -FilePath 'C:\\Users\\kuant\\AppData\\Local\\Programs\\Python\\Python313\\python.exe' -ArgumentList '-m pytest',$tmp,'--no-header','-v' -NoNewWindow -PassThru -RedirectStandardOutput ($env:TEMP+'\\out.txt') -RedirectStandardError ($env:TEMP+'\\err.txt'); $p.WaitForExit(30000); if (!$p.HasExited) { $p.Kill() }; $out = Get-Content ($env:TEMP+'\\out.txt') -Raw -ErrorAction SilentlyContinue; $err = Get-Content ($env:TEMP+'\\err.txt') -Raw -ErrorAction SilentlyContinue; Write-Output ($out+$err); Remove-Item $tmp -Force -ErrorAction SilentlyContinue\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        3776,
+        48
+      ],
+      "id": "3dd5b382-c57a-43db-b151-f42ab8fec456",
+      "name": "Run Pytest"
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = $json.stdout || \"\";\nconst err = $json.stderr || \"\";\nconst fullOutput = out + err;\n\nconst description = $node[\"Loop Over Tests\"].json.description || 'General Logic Test';\n\nlet status = 'FAILED';\nlet errorDetail = \"Unknown Error\";\n\nif (fullOutput.includes('PASSED')) {\n    status = 'PASSED';\n    errorDetail = \"Success\";\n} else {\n    // This captures the actual Python traceback instead of a generic message\n    const lines = fullOutput.split('\\n');\n    errorDetail = lines.slice(-3).join(' ').substring(0, 300) || \"Check Terminal: Command Failed\";\n}\n\nreturn [{\n    json: {\n        id: $node[\"Loop Over Tests\"].json.id,\n        description: description,\n        status: status,\n        output: errorDetail\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4000,
+        48
+      ],
+      "id": "7649ff19-0a17-4eae-9c72-f8ec1fdbd8c0",
+      "name": "Test Summary"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3776,
+        -224
+      ],
+      "id": "097cd13a-b8b2-4479-99d2-5d649acf8995",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "mode": "combineBySql",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        4240,
+        64
+      ],
+      "id": "a25ef71e-69ae-47b4-84b5-6a93f64195d7",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all results from the Aggregate node\nconst results = $json.data; \n\nlet html = `\n<h2>QA Test Report</h2>\n<table border=\"1\" cellpadding=\"5\" cellspacing=\"0\">\n<tr style=\"background-color: #f2f2f2;\">\n  <th>No</th>\n  <th>ID</th>\n  <th>Test Description</th>\n  <th>Status</th>\n  <th>Output</th>\n</tr>\n`;\n\nresults.forEach((r, i) => {\n  const color = r.status === 'PASSED' ? 'green' : 'red';\n  html += `\n  <tr>\n    <td>${i + 1}</td>\n    <td><b>${r.id || 'N/A'}</b></td>\n    <td>${r.description || 'N/A'}</td>\n    <td style=\"color: ${color}; font-weight: bold;\">${r.status || 'FAILED'}</td>\n    <td><pre>${(r.output || 'No output').replace(/</g, '&lt;')}</pre></td>\n  </tr>`;\n});\n\nhtml += `</table>`;\n\nreturn [{ json: { email_html: html } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4000,
+        -224
+      ],
+      "id": "ddb2880a-282e-4c69-9031-f2c5b0333787",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "sendTo": "kuantianeng@gmail.com",
+        "subject": "QA report",
+        "message": "={{ $json.html_report }}\n\n<a href=\"{{ $json.url }}\">Click Here to Approve</a>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        4800,
+        -480
+      ],
+      "id": "076e52aa-f968-407a-9469-693b76891a82",
+      "name": "Send a message3",
+      "webhookId": "565ff8e6-3ba5-433a-9270-21264cdc46fd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "JnqjGfRKUaAXlrgY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1408,
+        64
+      ],
+      "id": "ac8b84cc-0549-4c36-ba32-ef36444f37fa",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        4160,
+        -480
+      ],
+      "id": "2f6facc6-a6e5-488a-964b-ea2ecde4fccd",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.issue.url,, email_html",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        4368,
+        -480
+      ],
+      "id": "f1e9a2d6-846f-463a-8e44-2c08ba021705",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get all incoming items\nconst items = $input.all();\n\n// 2. Extract specific data points from the known items\n// Item 0 contains the URL\nconst issueUrl = items[0]?.json[\"body.issue.url\"] || \"\";\n\n// Item 1 contains the HTML report\nconst emailHtml = items[1]?.json[\"email_html\"] || \"\";\n\n// 3. Create a single combined output\n// We wrap the URL in a clickable HTML link to append it to the report\nconst finalHtml = `\n  ${emailHtml}\n`;\n\nreturn [\n  {\n    json: {\n      url: issueUrl,\n      html_report: finalHtml\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        -480
+      ],
+      "id": "353880ac-a94f-43a1-a0b8-d8eed09403c0",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "content": "Project: Issue Resolution and Quality Assusance Agent\nClient/Department: ViTrox AOI (Advanced Optical Inspection)\n\nCore Objective: To eliminate the \"Development-to-Deployment\" bottleneck by automating code verification and GitHub issue triaging using Agentic AI.\n\n1.0 Workflow Overview\nThis workflow acts as an autonomous \"Senior Architect\" and \"QA Engineer.\" It monitors GitHub for new issues or code changes, performs automated debugging, generates test cases, and notifies the team of results.\n\n1.1 Logic Flow (Step-by-Step)\nTriggering: Starts with a GitHub Trigger node monitoring repository activity.\n\nClassification (IF Nodes): * IF1 & IF: Filters the event type. It distinguishes between a New Issue (triggering debugging) and a Pull Request (triggering code review).\n\nData Retrieval: * Uses Get an Issue and Get a File nodes to pull the specific technical logs and source code associated with the event.\n\nAI Analysis (Ollama): * The AI Agent (powered by Ollama Chat Model) analyzes the bug and generates a corrected version of the algorithm code.\n\nAutomated Testing Loop:\n\nLoop Over Items: Generates 3 distinct test cases (Functional, Boundary, and Exception handling).\n\nExecution: Runs tests via Pytest or JavaScript nodes to verify if the fix is stable and logically sound.\n\nAggregation & Notification:\n\nThe Aggregate node compiles the Pass/Fail results.\n\nGmail Node: Sends a final summary and the updated code to the lead engineer and the original reporter.\n\nClosing: Suggests closing the GitHub issue once verification is successful.",
+        "height": 736,
+        "width": 960
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -1328
+      ],
+      "id": "ea2731d7-bea9-41ab-98d0-ab4292eb9b7e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "We use ngrok to host our n8n so that we can connect to the cloud (ngrok is Free :D) \n\nThis trigger accept issues and pull request events\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -352
+      ],
+      "id": "1033c20d-df8d-4e1a-960a-0875ae8b33fb",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Distinguish Issues and Pull Request\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        336,
+        -128
+      ],
+      "id": "35f2edd1-1c67-4252-a661-60e7a21a1979",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Notify owner of repo and get file and issue content\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -448
+      ],
+      "id": "cbd8b671-68e2-4a56-a345-a1095339147e",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Create Solution\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        -288
+      ],
+      "id": "70b2f235-f8ab-443a-a7b9-4f82f1bdc021",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "Create Test Case"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2928,
+        -272
+      ],
+      "id": "d8afd74b-a01c-4321-b92c-2e3295ebec7b",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "Run Test Case locally (remember to change path ya if anyone is testing to ur own python path) in loop one test case by one\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3728,
+        -80
+      ],
+      "id": "f465916c-856b-4b62-8101-4a2cf1df7278",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "Send Report Nicely to owner :D\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4352,
+        -608
+      ],
+      "id": "c72dae71-6fa4-4f4a-a19f-5be9d08c444e",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "Get Pull Request",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        528,
+        448
+      ],
+      "id": "1c54718b-60a8-43e6-ac5d-d36624ba7ac4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Create Solution check for conlfict analyze whether this pull request work\n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        368
+      ],
+      "id": "84b8ea50-a7f3-43e5-8379-5fd43c5492ce",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "We have to split file to run each file one by one for testing unless needed both file\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -288
+      ],
+      "id": "13378ea6-fe2f-45fd-b664-3fd0a6c5fbe1",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "Json code clear to clear unnecessary file so that the computer can understand pure python file "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3248,
+        -272
+      ],
+      "id": "6610236a-b891-4d9e-a9be-123040268715",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "create table of report /generate report of result"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4160,
+        -240
+      ],
+      "id": "31f420e1-9ecb-406f-9776-b3e7d0846138",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "Notify owner with report and let owner decide whethter to accept it"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4720,
+        -624
+      ],
+      "id": "d1662cd6-5c1c-422d-a284-31a1c3822d9b",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "Extact text from file\n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        96
+      ],
+      "id": "2d011667-bc89-4bff-ad84-e28c78f1dfd3",
+      "name": "Sticky Note14"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Github Trigger": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get an issue",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get an issue": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List files": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "JSON Cleaner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Get a file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent5",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a repository in GitHub": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent5",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent5": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON Cleaner": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Tests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Tests": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Run Pytest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Pytest": {
+      "main": [
+        [
+          {
+            "node": "Test Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Summary": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Tests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Send a message3": {
+      "main": [
+        []
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a701d5e9-5f8d-4158-a682-dafbc33f8e77",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "221a71759a2989a157d5157bd676c535f7daf2c28aa7576be65558ceb4e63361"
+  },
+  "id": "UjiPSVWc50tMbAps",
+  "tags": []
+}
